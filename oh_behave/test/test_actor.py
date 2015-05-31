@@ -3,14 +3,15 @@
 import unittest
 from unittest import mock
 
-from mod import actor
-import mod.test.test_behave
+from oh_behave import actor
+from oh_behave import behave
+import oh_behave.test.test_behave
 
 class TestActor(unittest.TestCase):
     """Tests the actor class"""
     def setUp(self):
-        from mod import behave
-        self.mock_rootnode = mod.test.test_behave.mocknode_builder(
+        from oh_behave import behave
+        self.mock_rootnode = oh_behave.test.test_behave.mocknode_builder(
                 behave.ExecuteResult.ready)
         self.name = "Billy Bob"
         self.actor = actor.Actor(self.name, self.mock_rootnode)
@@ -29,19 +30,16 @@ class TestActor(unittest.TestCase):
 
     def test_execute_rootnode_failure(self):
         """execute returns failure if root node execution returns failure"""
-        from mod import behave
         self.actor._rootnode.execute.return_value = behave.ExecuteResult.failure
         self.assertEqual(behave.ExecuteResult.failure, self.actor.execute())
 
     def test_execute_rootnode_success(self):
         """execute returns success if root node execution returns success"""
-        from mod import behave
         self.actor._rootnode.execute.return_value = behave.ExecuteResult.success
         self.assertEqual(behave.ExecuteResult.success, self.actor.execute())
 
     def test_execute_rootnode_ready(self):
         """execute returns ready if root node execution returns ready"""
-        from mod import behave
         self.actor._rootnode.execute.return_value = behave.ExecuteResult.ready
         self.assertEqual(behave.ExecuteResult.ready, self.actor.execute())
 

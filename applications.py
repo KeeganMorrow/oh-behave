@@ -1,5 +1,5 @@
-from mod import behave
-from mod import actor
+from oh_behave import behave
+from oh_behave import actor
 
 def main():
     it1 = behave.NodeLeafIterative('leaf1', 2)

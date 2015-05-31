@@ -2,7 +2,7 @@
 import unittest
 import pprint
 from unittest import mock
-from mod import behave
+from oh_behave import behave
 
 
 def mocknode_builder(execstatus):
