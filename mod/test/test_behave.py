@@ -43,11 +43,11 @@ def assert_node_calls(mock_node, succ_count, fail_count, exec_count):
 class TestNodeComposite(unittest.TestCase):
     """Tests the composite node's logic"""
     def setUp(self):
-        self.composite = behave.NodeComposite()
+        self.composite = behave.NodeComposite('composite00')
 
     def test_node_composite__init__(self):
         """Test the composite node's constructor"""
-        composite = behave.NodeComposite()
+        composite = behave.NodeComposite('composite01')
         self.assertEqual(composite._children, [])
 
     def test_node_composite_addchild(self):
@@ -61,7 +61,7 @@ class TestNodeSequence(unittest.TestCase):
     """Tests the sequence node's logic"""
 
     def setUp(self):
-        self.sequence = behave.NodeSequence()
+        self.sequence = behave.NodeSequence('sequence00')
 
     def test_node_sequence__init__(self):
         """Test sequence initialization"""
@@ -117,7 +117,7 @@ class TestNodeSelector(unittest.TestCase):
     """Tests the selector node's logic"""
 
     def setUp(self):
-        self.selector = behave.NodeSelector()
+        self.selector = behave.NodeSelector('selector00')
 
     def test_node_selector__init__(self):
         """Test selector initialization"""
@@ -185,7 +185,7 @@ class TestNodeLeafIterative(unittest.TestCase):
     def test_node_leaf_iterative_execute_loops(self):
         """Tests that the iterative leaf returns success after n executions"""
         execs = 10
-        leaf = behave.NodeLeafIterative(execs)
+        leaf = behave.NodeLeafIterative('leaf_iterate00', execs)
         status = None
         loops = 0
         while status is not behave.ExecuteResult.success:

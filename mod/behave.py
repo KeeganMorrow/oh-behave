@@ -7,12 +7,16 @@ ERR_ABSTRACT_CALL = "Attempted to call abstract method"
 
 def print_node_decorator(func):
 
-    def func_decorator(*args, **kwargs):
-        msg = '{0} running'.format(func.__name__)
-        ret = func(*args, **kwargs)
+    def func_decorator(self, *args, **kwargs):
+        print('{0}.{1} running'.format(self.get_name(), func.__name__))
+
+        ret = func(self, *args, **kwargs)
+
+        msg = '{0}.{1} finished'.format(self.get_name(), func.__name__)
         if ret in ExecuteResult:
             msg += ' returns status \"{0}\"'.format(str(ret))
         print(msg)
+
         return ret
 
     return func_decorator
@@ -29,8 +33,8 @@ class ExecuteResult(enum.Enum):
 
 class Node:
     """Base node class"""
-    def __init__(self):
-        pass
+    def __init__(self, name):
+        self._name = name
 
     @print_node_decorator
     def execute(self):
@@ -56,6 +60,12 @@ class Node:
         ret = self._success()
         return ret
 
+    def get_name(self):
+        """
+        Method to read the name variable
+        """
+        return self._name
+
     def _execute(self):
         """
         Abstract private method for executing the node
@@ -78,8 +88,8 @@ class Node:
 
 class NodeComposite(Node):
     """Abstract Base composite node class"""
-    def __init__(self):
-        super().__init__()
+    def __init__(self, name):
+        super().__init__(name)
         self._children = []
 
     def addchild(self, childnode):
@@ -94,8 +104,8 @@ class NodeComposite(Node):
 class NodeSequence(NodeComposite):
     """Sequence node class"""
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, name):
+        super().__init__(name)
         self.name = 'sequence'
 
     def _success(self):
@@ -129,8 +139,8 @@ class NodeSequence(NodeComposite):
 class NodeSelector(NodeComposite):
     """Sequence node class"""
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, name):
+        super().__init__(name)
         self.name = 'sequence'
 
     def _success(self):
@@ -163,8 +173,8 @@ class NodeSelector(NodeComposite):
 class NodeLeafIterative(Node):
     """Node that takes a number of executions before success"""
 
-    def __init__(self, executions):
-        super().__init__()
+    def __init__(self, name, executions):
+        super().__init__(name)
         self._remaining_exec = executions
 
     def _success(self):
