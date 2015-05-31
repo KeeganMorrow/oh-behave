@@ -113,4 +113,66 @@ class TestNodeSequence(unittest.TestCase):
         result = self.sequence.execute()
         self.assertEqual(result, behave.ExecuteResult.success)
 
+class TestNodeSelector(unittest.TestCase):
+    """Tests the selector node's logic"""
+
+    def setUp(self):
+        self.selector = behave.NodeSelector()
+
+    def test_node_selector__init__(self):
+        """Test selector initialization"""
+        self.assertTrue(isinstance(self.selector.name, str))
+
+    def test_node_selector_execute_repeat(self):
+        """selector exec repeats when node returns ready status the first time"""
+        node1 = mocknode_builder(behave.ExecuteResult.ready)
+        node2 = mocknode_builder(behave.ExecuteResult.success)
+        self.selector.addchild(node1)
+        self.selector.addchild(node2)
+        result = self.selector.execute()
+        self.assertEqual(result, behave.ExecuteResult.ready)
+        assert_node_calls(node1, 0, 0, 1)
+        assert_node_calls(node2, 0, 0, 0)
+        result = self.selector.execute()
+        self.assertEqual(result, behave.ExecuteResult.ready)
+        assert_node_calls(node1, 0, 0, 2)
+        assert_node_calls(node2, 0, 0, 0)
+
+    def test_node_selector_execute_child_failure(self):
+        """selector moves to next child when current fails"""
+        node1 = mocknode_builder(behave.ExecuteResult.failure)
+        node2 = mocknode_builder(behave.ExecuteResult.ready)
+        self.selector.addchild(node1)
+        self.selector.addchild(node2)
+        result = self.selector.execute()
+        self.assertEqual(result, behave.ExecuteResult.ready)
+        assert_node_calls(node1, 0, 1, 1)
+        assert_node_calls(node2, 0, 0, 0)
+        result = self.selector.execute()
+        self.assertEqual(result, behave.ExecuteResult.ready)
+        assert_node_calls(node1, 0, 1, 1)
+        assert_node_calls(node2, 0, 0, 1)
+
+    def test_node_selector_execute_child_success(self):
+        """selector succeeds when current child succeeds"""
+        node1 = mocknode_builder(behave.ExecuteResult.success)
+        node2 = mocknode_builder(behave.ExecuteResult.ready)
+        self.selector.addchild(node1)
+        self.selector.addchild(node2)
+        result = self.selector.execute()
+        self.assertEqual(result, behave.ExecuteResult.success)
+        assert_node_calls(node1, 1, 0, 1)
+        assert_node_calls(node2, 0, 0, 0)
+        result = self.selector.execute()
+        self.assertEqual(result, behave.ExecuteResult.success)
+
+        # Note: This test means that success() will be
+        # called multiple times if execute is run succesfully
+        assert_node_calls(node1, 2, 0, 2)
+        assert_node_calls(node2, 0, 0, 0)
+
+    def test_node_selector_execute_empty(self):
+        """selector exec returns success when called and already empty"""
+        result = self.selector.execute()
+        self.assertEqual(result, behave.ExecuteResult.failure)
 

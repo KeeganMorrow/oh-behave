@@ -125,3 +125,37 @@ class NodeSequence(NodeComposite):
 
         return status
 
+
+class NodeSelector(NodeComposite):
+    """Sequence node class"""
+
+    def __init__(self):
+        super().__init__()
+        self.name = 'sequence'
+
+    def _success(self):
+        pass
+
+    def _failed(self):
+        pass
+
+    def _execute(self):
+        """Execute until one of the children succeed"""
+
+        if len(self._children) == 0:
+            status = ExecuteResult.failure
+        else:
+            firstnode = self._children[0]
+            status = firstnode.execute()
+            if status is ExecuteResult.failure:
+                firstnode.failed()
+                self._children.pop(0)
+                if len(self._children) == 0:
+                    status = ExecuteResult.failure
+                else:
+                    status = ExecuteResult.ready
+
+            elif status is ExecuteResult.success:
+                firstnode.success()
+
+        return status
