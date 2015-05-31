@@ -3,16 +3,15 @@
 import unittest
 from unittest import mock
 
+import oh_behave
 from oh_behave import actor
 from oh_behave import behave
-import oh_behave.test.test_behave
 
 class TestActor(unittest.TestCase):
     """Tests the actor class"""
     def setUp(self):
-        from oh_behave import behave
         self.mock_rootnode = oh_behave.test.test_behave.mocknode_builder(
-                behave.ExecuteResult.ready)
+                oh_behave.ExecuteResult.ready)
         self.name = "Billy Bob"
         self.actor = actor.Actor(self.name, self.mock_rootnode)
 
@@ -30,18 +29,18 @@ class TestActor(unittest.TestCase):
 
     def test_execute_rootnode_failure(self):
         """execute returns failure if root node execution returns failure"""
-        self.actor._rootnode.execute.return_value = behave.ExecuteResult.failure
-        self.assertEqual(behave.ExecuteResult.failure, self.actor.execute())
+        self.actor._rootnode.execute.return_value = oh_behave.ExecuteResult.failure
+        self.assertEqual(oh_behave.ExecuteResult.failure, self.actor.execute())
 
     def test_execute_rootnode_success(self):
         """execute returns success if root node execution returns success"""
-        self.actor._rootnode.execute.return_value = behave.ExecuteResult.success
-        self.assertEqual(behave.ExecuteResult.success, self.actor.execute())
+        self.actor._rootnode.execute.return_value = oh_behave.ExecuteResult.success
+        self.assertEqual(oh_behave.ExecuteResult.success, self.actor.execute())
 
     def test_execute_rootnode_ready(self):
         """execute returns ready if root node execution returns ready"""
-        self.actor._rootnode.execute.return_value = behave.ExecuteResult.ready
-        self.assertEqual(behave.ExecuteResult.ready, self.actor.execute())
+        self.actor._rootnode.execute.return_value = oh_behave.ExecuteResult.ready
+        self.assertEqual(oh_behave.ExecuteResult.ready, self.actor.execute())
 
     def test_set_rootnode_changes_node(self):
         """set_rootnode changes actor's rootnode"""

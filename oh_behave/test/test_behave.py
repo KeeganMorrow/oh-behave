@@ -2,6 +2,8 @@
 import unittest
 import pprint
 from unittest import mock
+
+import oh_behave
 from oh_behave import behave
 
 
@@ -52,7 +54,7 @@ class TestNodeComposite(unittest.TestCase):
 
     def test_node_composite_addchild(self):
         """Tests adding a child to the sequence"""
-        node = mocknode_builder(behave.ExecuteResult.ready)
+        node = mocknode_builder(oh_behave.ExecuteResult.ready)
         self.assertEqual(self.composite._children, [])
         self.composite.addchild(node)
         self.assertIn(node, self.composite._children)
@@ -69,49 +71,49 @@ class TestNodeSequence(unittest.TestCase):
 
     def test_node_sequence_execute_repeat(self):
         """Sequence exec repeats when node returns ready status the first time"""
-        node1 = mocknode_builder(behave.ExecuteResult.ready)
-        node2 = mocknode_builder(behave.ExecuteResult.success)
+        node1 = mocknode_builder(oh_behave.ExecuteResult.ready)
+        node2 = mocknode_builder(oh_behave.ExecuteResult.success)
         self.sequence.addchild(node1)
         self.sequence.addchild(node2)
         result = self.sequence.execute()
-        self.assertEqual(result, behave.ExecuteResult.ready)
+        self.assertEqual(result, oh_behave.ExecuteResult.ready)
         assert_node_calls(node1, 0, 0, 1)
         assert_node_calls(node2, 0, 0, 0)
         result = self.sequence.execute()
-        self.assertEqual(result, behave.ExecuteResult.ready)
+        self.assertEqual(result, oh_behave.ExecuteResult.ready)
         assert_node_calls(node1, 0, 0, 2)
         assert_node_calls(node2, 0, 0, 0)
 
     def test_node_sequence_execute_failure(self):
         """Sequence exec returns failure on child failure"""
-        node1 = mocknode_builder(behave.ExecuteResult.failure)
-        node2 = mocknode_builder(behave.ExecuteResult.success)
+        node1 = mocknode_builder(oh_behave.ExecuteResult.failure)
+        node2 = mocknode_builder(oh_behave.ExecuteResult.success)
         self.sequence.addchild(node1)
         self.sequence.addchild(node2)
         result = self.sequence.execute()
         assert_node_calls(node1, 0, 1, 1)
         assert_node_calls(node2, 0, 0, 0)
-        self.assertEqual(result, behave.ExecuteResult.failure)
+        self.assertEqual(result, oh_behave.ExecuteResult.failure)
 
     def test_node_sequence_execute_succeed(self):
         """Sequence exec progresses and calls success() on child success"""
-        node1 = mocknode_builder(behave.ExecuteResult.success)
-        node2 = mocknode_builder(behave.ExecuteResult.success)
+        node1 = mocknode_builder(oh_behave.ExecuteResult.success)
+        node2 = mocknode_builder(oh_behave.ExecuteResult.success)
         self.sequence.addchild(node1)
         self.sequence.addchild(node2)
         result = self.sequence.execute()
         assert_node_calls(node1, 1, 0, 1)
         assert_node_calls(node2, 0, 0, 0)
-        self.assertEqual(result, behave.ExecuteResult.ready)
+        self.assertEqual(result, oh_behave.ExecuteResult.ready)
         result = self.sequence.execute()
         assert_node_calls(node1, 1, 0, 1)
         assert_node_calls(node2, 1, 0, 1)
-        self.assertEqual(result, behave.ExecuteResult.success)
+        self.assertEqual(result, oh_behave.ExecuteResult.success)
 
     def test_node_sequence_execute_empty(self):
         """Sequence exec returns success when called and already empty"""
         result = self.sequence.execute()
-        self.assertEqual(result, behave.ExecuteResult.success)
+        self.assertEqual(result, oh_behave.ExecuteResult.success)
 
 class TestNodeSelector(unittest.TestCase):
     """Tests the selector node's logic"""
@@ -125,46 +127,46 @@ class TestNodeSelector(unittest.TestCase):
 
     def test_node_selector_execute_repeat(self):
         """selector exec repeats when node returns ready status the first time"""
-        node1 = mocknode_builder(behave.ExecuteResult.ready)
-        node2 = mocknode_builder(behave.ExecuteResult.success)
+        node1 = mocknode_builder(oh_behave.ExecuteResult.ready)
+        node2 = mocknode_builder(oh_behave.ExecuteResult.success)
         self.selector.addchild(node1)
         self.selector.addchild(node2)
         result = self.selector.execute()
-        self.assertEqual(result, behave.ExecuteResult.ready)
+        self.assertEqual(result, oh_behave.ExecuteResult.ready)
         assert_node_calls(node1, 0, 0, 1)
         assert_node_calls(node2, 0, 0, 0)
         result = self.selector.execute()
-        self.assertEqual(result, behave.ExecuteResult.ready)
+        self.assertEqual(result, oh_behave.ExecuteResult.ready)
         assert_node_calls(node1, 0, 0, 2)
         assert_node_calls(node2, 0, 0, 0)
 
     def test_node_selector_execute_child_failure(self):
         """selector moves to next child when current fails"""
-        node1 = mocknode_builder(behave.ExecuteResult.failure)
-        node2 = mocknode_builder(behave.ExecuteResult.ready)
+        node1 = mocknode_builder(oh_behave.ExecuteResult.failure)
+        node2 = mocknode_builder(oh_behave.ExecuteResult.ready)
         self.selector.addchild(node1)
         self.selector.addchild(node2)
         result = self.selector.execute()
-        self.assertEqual(result, behave.ExecuteResult.ready)
+        self.assertEqual(result, oh_behave.ExecuteResult.ready)
         assert_node_calls(node1, 0, 1, 1)
         assert_node_calls(node2, 0, 0, 0)
         result = self.selector.execute()
-        self.assertEqual(result, behave.ExecuteResult.ready)
+        self.assertEqual(result, oh_behave.ExecuteResult.ready)
         assert_node_calls(node1, 0, 1, 1)
         assert_node_calls(node2, 0, 0, 1)
 
     def test_node_selector_execute_child_success(self):
         """selector succeeds when current child succeeds"""
-        node1 = mocknode_builder(behave.ExecuteResult.success)
-        node2 = mocknode_builder(behave.ExecuteResult.ready)
+        node1 = mocknode_builder(oh_behave.ExecuteResult.success)
+        node2 = mocknode_builder(oh_behave.ExecuteResult.ready)
         self.selector.addchild(node1)
         self.selector.addchild(node2)
         result = self.selector.execute()
-        self.assertEqual(result, behave.ExecuteResult.success)
+        self.assertEqual(result, oh_behave.ExecuteResult.success)
         assert_node_calls(node1, 1, 0, 1)
         assert_node_calls(node2, 0, 0, 0)
         result = self.selector.execute()
-        self.assertEqual(result, behave.ExecuteResult.success)
+        self.assertEqual(result, oh_behave.ExecuteResult.success)
 
         # Note: This test means that success() will be
         # called multiple times if execute is run succesfully
@@ -174,33 +176,33 @@ class TestNodeSelector(unittest.TestCase):
     def test_node_selector_execute_empty(self):
         """selector exec returns success when called and already empty"""
         result = self.selector.execute()
-        self.assertEqual(result, behave.ExecuteResult.failure)
+        self.assertEqual(result, oh_behave.ExecuteResult.failure)
 
 class TestNodeDecorator(unittest.TestCase):
     """Tests the decorator node base's logic"""
     def setUp(self):
-        self.mock_node = mocknode_builder(behave.ExecuteResult.ready)
+        self.mock_node = mocknode_builder(oh_behave.ExecuteResult.ready)
         self.decorator = behave.NodeDecorator('decorator', self.mock_node)
 
     def test_node_decorator_execute_success(self):
         """Tests that the decorator passes succesful execution through"""
-        self.mock_node.execute.return_value = behave.ExecuteResult.success
+        self.mock_node.execute.return_value = oh_behave.ExecuteResult.success
         ret = self.decorator.execute()
-        self.assertIs(ret, behave.ExecuteResult.success)
+        self.assertIs(ret, oh_behave.ExecuteResult.success)
         self.mock_node.execute.assert_called_with()
 
     def test_node_decorator_execute_failure(self):
         """Tests that the decorator passes failed execution through"""
-        self.mock_node.execute.return_value = behave.ExecuteResult.failure
+        self.mock_node.execute.return_value = oh_behave.ExecuteResult.failure
         ret = self.decorator.execute()
-        self.assertIs(ret, behave.ExecuteResult.failure)
+        self.assertIs(ret, oh_behave.ExecuteResult.failure)
         self.mock_node.execute.assert_called_with()
 
     def test_node_decorator_execute_ready(self):
         """Tests that the decorator passes ready execution through"""
-        self.mock_node.execute.return_value = behave.ExecuteResult.ready
+        self.mock_node.execute.return_value = oh_behave.ExecuteResult.ready
         ret = self.decorator.execute()
-        self.assertIs(ret, behave.ExecuteResult.ready)
+        self.assertIs(ret, oh_behave.ExecuteResult.ready)
         self.mock_node.execute.assert_called_with()
 
     def test_node_decorator_success_passthrough(self):
@@ -216,28 +218,28 @@ class TestNodeDecorator(unittest.TestCase):
 class TestNodeDecoratorInvert(unittest.TestCase):
     """Tests the decorator node base's logic"""
     def setUp(self):
-        self.mock_node = mocknode_builder(behave.ExecuteResult.ready)
+        self.mock_node = mocknode_builder(oh_behave.ExecuteResult.ready)
         self.decorator = behave.NodeDecoratorInvert('invert', self.mock_node)
 
     def test_node_decorator_invert_execute_success(self):
         """Tests that the decorator makes success into failure"""
-        self.mock_node.execute.return_value = behave.ExecuteResult.success
+        self.mock_node.execute.return_value = oh_behave.ExecuteResult.success
         ret = self.decorator.execute()
-        self.assertIs(ret, behave.ExecuteResult.failure)
+        self.assertIs(ret, oh_behave.ExecuteResult.failure)
         self.mock_node.execute.assert_called_with()
 
     def test_node_decorator_invert_execute_failure(self):
         """Tests that the decorator makes failure into success"""
-        self.mock_node.execute.return_value = behave.ExecuteResult.failure
+        self.mock_node.execute.return_value = oh_behave.ExecuteResult.failure
         ret = self.decorator.execute()
-        self.assertIs(ret, behave.ExecuteResult.success)
+        self.assertIs(ret, oh_behave.ExecuteResult.success)
         self.mock_node.execute.assert_called_with()
 
     def test_node_decorator_invert_execute_ready(self):
         """Tests that the decorator passes ready execution state through"""
-        self.mock_node.execute.return_value = behave.ExecuteResult.ready
+        self.mock_node.execute.return_value = oh_behave.ExecuteResult.ready
         ret = self.decorator.execute()
-        self.assertIs(ret, behave.ExecuteResult.ready)
+        self.assertIs(ret, oh_behave.ExecuteResult.ready)
         self.mock_node.execute.assert_called_with()
 
 class TestNodeLeafIterative(unittest.TestCase):
@@ -252,7 +254,7 @@ class TestNodeLeafIterative(unittest.TestCase):
         leaf = behave.NodeLeafIterative('leaf_iterate00', execs)
         status = None
         loops = 0
-        while status is not behave.ExecuteResult.success:
+        while status is not oh_behave.ExecuteResult.success:
             status = leaf.execute()
             loops += 1
             # Fail if it looks like we are going to loop forever

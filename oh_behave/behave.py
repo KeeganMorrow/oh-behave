@@ -2,8 +2,7 @@
 #TODO: Come up with a better name!
 
 import enum
-
-ERR_ABSTRACT_CALL = "Attempted to call abstract method"
+import oh_behave
 
 def print_node_decorator(func):
     """
@@ -17,23 +16,13 @@ def print_node_decorator(func):
         ret = func(self, *args, **kwargs)
 
         msg = '{0}.{1} finished'.format(self.get_name(), func.__name__)
-        if ret in ExecuteResult:
+        if ret in oh_behave.ExecuteResult:
             msg += ' returns status \"{0}\"'.format(str(ret))
         print(msg)
 
         return ret
 
     return func_decorator
-
-class ExecuteResult(enum.Enum):
-    """
-    Represents results of executing a node
-
-    Can be either a success, ready to run again, or failure
-    """
-    failure = -1
-    ready = 0
-    success = 1
 
 class Node:
     """Base node class"""
@@ -74,21 +63,21 @@ class Node:
         """
         Abstract private method for executing the node
 
-        Implementations should return an ExecuteResult
+        Implementations should return an oh_behave.ExecuteResult
         """
-        raise NotImplementedError(ERR_ABSTRACT_CALL)
+        raise NotImplementedError(mod.ERR_ABSTRACT_CALL)
 
     def _failed(self):
         """
         Abstract method to run on node failure
         """
-        raise NotImplementedError(ERR_ABSTRACT_CALL)
+        raise NotImplementedError(mod.ERR_ABSTRACT_CALL)
 
     def _success(self):
         """
         Abstract method to run on node success
         """
-        raise NotImplementedError(ERR_ABSTRACT_CALL)
+        raise NotImplementedError(mod.ERR_ABSTRACT_CALL)
 
 class NodeComposite(Node):
     """Abstract Base composite node class"""
@@ -122,19 +111,19 @@ class NodeSequence(NodeComposite):
         """Execute the child nodes in a sequence"""
 
         if len(self._children) == 0:
-            status = ExecuteResult.success
+            status = oh_behave.ExecuteResult.success
         else:
             firstnode = self._children[0]
             status = firstnode.execute()
-            if status is ExecuteResult.success:
+            if status is oh_behave.ExecuteResult.success:
                 firstnode.success()
                 self._children.pop(0)
                 if len(self._children) == 0:
-                    status = ExecuteResult.success
+                    status = oh_behave.ExecuteResult.success
                 else:
-                    status = ExecuteResult.ready
+                    status = oh_behave.ExecuteResult.ready
 
-            elif status is ExecuteResult.failure:
+            elif status is oh_behave.ExecuteResult.failure:
                 firstnode.failed()
 
         return status
@@ -157,19 +146,19 @@ class NodeSelector(NodeComposite):
         """Execute until one of the children succeed"""
 
         if len(self._children) == 0:
-            status = ExecuteResult.failure
+            status = oh_behave.ExecuteResult.failure
         else:
             firstnode = self._children[0]
             status = firstnode.execute()
-            if status is ExecuteResult.failure:
+            if status is oh_behave.ExecuteResult.failure:
                 firstnode.failed()
                 self._children.pop(0)
                 if len(self._children) == 0:
-                    status = ExecuteResult.failure
+                    status = oh_behave.ExecuteResult.failure
                 else:
-                    status = ExecuteResult.ready
+                    status = oh_behave.ExecuteResult.ready
 
-            elif status is ExecuteResult.success:
+            elif status is oh_behave.ExecuteResult.success:
                 firstnode.success()
 
         return status
@@ -194,10 +183,10 @@ class NodeDecoratorInvert(NodeDecorator):
     """Inverts execute result of child node"""
     def _execute(self):
         status = self._decoratee.execute()
-        if status is ExecuteResult.success:
-            status = ExecuteResult.failure
-        elif status is ExecuteResult.failure:
-            status = ExecuteResult.success
+        if status is oh_behave.ExecuteResult.success:
+            status = oh_behave.ExecuteResult.failure
+        elif status is oh_behave.ExecuteResult.failure:
+            status = oh_behave.ExecuteResult.success
         return status
 
 class NodeLeafIterative(Node):
@@ -217,12 +206,12 @@ class NodeLeafIterative(Node):
         """Execute until enough iterations for success"""
         #TODO: _remaining_exec should possibly be stored in the actor?
         if self._remaining_exec < 1:
-            ret = ExecuteResult.success
+            ret = oh_behave.ExecuteResult.success
         elif self._remaining_exec == 1:
-            ret = ExecuteResult.success
+            ret = oh_behave.ExecuteResult.success
             self._remaining_exec -= 1
         else:
-            ret = ExecuteResult.ready
+            ret = oh_behave.ExecuteResult.ready
             self._remaining_exec -= 1
         return ret
 
