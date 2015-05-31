@@ -7,15 +7,15 @@ class Action(behave.Node):
     """
     Action base class
     """
-    def __init__(self, actor, name):
-        super().__init__(name)
-        self._actor = actor
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._actor = kwargs['actor']
 
 class ActionTimed(Action):
     """Action that takes a certain amount of time"""
-    def __init__(self, actor, name, time):
-        super().__init__(actor, name)
-        self.timegoal = time
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.timegoal = kwargs['timegoal']
         self.time = 1
 
     def _execute(self):

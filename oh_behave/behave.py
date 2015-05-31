@@ -26,8 +26,8 @@ def print_node_decorator(func):
 
 class Node:
     """Base node class"""
-    def __init__(self, name):
-        self._name = name
+    def __init__(self, *args, **kwargs):
+        self._name = kwargs['name']
 
     @print_node_decorator
     def execute(self):
@@ -81,8 +81,8 @@ class Node:
 
 class NodeComposite(Node):
     """Abstract Base composite node class"""
-    def __init__(self, name):
-        super().__init__(name)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self._children = []
 
     def addchild(self, childnode):
@@ -97,9 +97,8 @@ class NodeComposite(Node):
 class NodeSequence(NodeComposite):
     """Sequence node class"""
 
-    def __init__(self, name):
-        super().__init__(name)
-        self.name = 'sequence'
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
     def _success(self):
         pass
@@ -132,9 +131,8 @@ class NodeSequence(NodeComposite):
 class NodeSelector(NodeComposite):
     """Sequence node class"""
 
-    def __init__(self, name):
-        super().__init__(name)
-        self.name = 'sequence'
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
     def _success(self):
         pass
@@ -166,9 +164,9 @@ class NodeSelector(NodeComposite):
 class NodeDecorator(Node):
     """Base Decorator, passes everything through"""
 
-    def __init__(self, name, decoratee):
-        super().__init__(name)
-        self._decoratee = decoratee
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._decoratee = kwargs['decoratee']
 
     def _success(self):
         self._decoratee.success()
@@ -192,9 +190,9 @@ class NodeDecoratorInvert(NodeDecorator):
 class NodeLeafAction(Node):
     """Node that runs runs an action"""
 
-    def __init__(self, name, action):
-        super().__init__(name)
-        self._action = action
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._action = kwargs['action']
 
     def _success(self):
         return self._action.success()

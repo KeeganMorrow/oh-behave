@@ -5,19 +5,19 @@ from oh_behave import action
 
 def main():
 
-    root = behave.NodeSelector('selector')
-    billybob = actor.Actor("Billy bob", root)
+    root = behave.NodeSelector(name='selector')
+    billybob = actor.Actor(name="Billy Bob", rootnode=root)
 
-    it1 = behave.NodeLeafAction('leaf1', action.ActionTimed(billybob, 'sleep', 2))
-    it2 = behave.NodeDecoratorInvert('inv', behave.NodeLeafAction('leaf2', action.ActionTimed(billybob, 'mine gold', 1)))
-    it3 = behave.NodeLeafAction('leaf3', action.ActionTimed(billybob, 'cause trouble', 3))
-    it4 = behave.NodeLeafAction('leaf4', action.ActionTimed(billybob, 'look at cat pictures', 1))
+    it1 = behave.NodeLeafAction(name='leaf1', action=action.ActionTimed(actor=billybob, name='sleep', timegoal=2))
+    it2 = behave.NodeDecoratorInvert(name='inv', decoratee=behave.NodeLeafAction(name='leaf2', action=action.ActionTimed(actor=billybob, name='mine gold', timegoal=1)))
+    it3 = behave.NodeLeafAction(name='leaf3', action=action.ActionTimed(actor=billybob, name='cause trouble', timegoal=3))
+    it4 = behave.NodeLeafAction(name='leaf4', action=action.ActionTimed(actor=billybob, name='look at cat pictures', timegoal=1))
 
-    seq1 = behave.NodeSequence('sequence1')
+    seq1 = behave.NodeSequence(name='sequence1')
     seq1.addchild(it1)
     seq1.addchild(it2)
 
-    seq2 = behave.NodeSequence('sequence2')
+    seq2 = behave.NodeSequence(name='sequence2')
     seq2.addchild(it3)
     seq2.addchild(it4)
 

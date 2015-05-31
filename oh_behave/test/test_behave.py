@@ -42,14 +42,21 @@ def assert_node_calls(mock_node, succ_count, fail_count, exec_count):
     if failed:
         raise AssertionError(failmsg)
 
+class TestNode(unittest.TestCase):
+    """Tests the base node's logic"""
+    def setUp(self):
+        self.node = behave.NodeComposite(name='node00')
+    def test_node__init__(self):
+        self.assertTrue(isinstance(self.node._name, str))
+
 class TestNodeComposite(unittest.TestCase):
     """Tests the composite node's logic"""
     def setUp(self):
-        self.composite = behave.NodeComposite('composite00')
+        self.composite = behave.NodeComposite(name='composite00')
 
     def test_node_composite__init__(self):
         """Test the composite node's constructor"""
-        composite = behave.NodeComposite('composite01')
+        composite = behave.NodeComposite(name='composite01')
         self.assertEqual(composite._children, [])
 
     def test_node_composite_addchild(self):
@@ -63,11 +70,11 @@ class TestNodeSequence(unittest.TestCase):
     """Tests the sequence node's logic"""
 
     def setUp(self):
-        self.sequence = behave.NodeSequence('sequence00')
+        self.sequence = behave.NodeSequence(name='sequence00')
 
     def test_node_sequence__init__(self):
         """Test sequence initialization"""
-        self.assertTrue(isinstance(self.sequence.name, str))
+        pass
 
     def test_node_sequence_execute_repeat(self):
         """Sequence exec repeats when node returns ready status the first time"""
@@ -119,11 +126,11 @@ class TestNodeSelector(unittest.TestCase):
     """Tests the selector node's logic"""
 
     def setUp(self):
-        self.selector = behave.NodeSelector('selector00')
+        self.selector = behave.NodeSelector(name='selector00')
 
     def test_node_selector__init__(self):
         """Test selector initialization"""
-        self.assertTrue(isinstance(self.selector.name, str))
+        pass
 
     def test_node_selector_execute_repeat(self):
         """selector exec repeats when node returns ready status the first time"""
@@ -182,7 +189,7 @@ class TestNodeDecorator(unittest.TestCase):
     """Tests the decorator node base's logic"""
     def setUp(self):
         self.mock_node = mocknode_builder(oh_behave.ExecuteResult.ready)
-        self.decorator = behave.NodeDecorator('decorator', self.mock_node)
+        self.decorator = behave.NodeDecorator(name='decorator', decoratee=self.mock_node)
 
     def test_node_decorator_execute_success(self):
         """Tests that the decorator passes succesful execution through"""
@@ -219,7 +226,7 @@ class TestNodeDecoratorInvert(unittest.TestCase):
     """Tests the decorator node base's logic"""
     def setUp(self):
         self.mock_node = mocknode_builder(oh_behave.ExecuteResult.ready)
-        self.decorator = behave.NodeDecoratorInvert('invert', self.mock_node)
+        self.decorator = behave.NodeDecoratorInvert(name='invert', decoratee=self.mock_node)
 
     def test_node_decorator_invert_execute_success(self):
         """Tests that the decorator makes success into failure"""
@@ -247,7 +254,7 @@ class TestNodeLeafAction(unittest.TestCase):
     def setUp(self):
         from oh_behave import action
         self.mock_action = mock.Mock(spec=action.Action)
-        self.leaf = behave.NodeLeafAction('actionleaf', self.mock_action)
+        self.leaf = behave.NodeLeafAction(name='actionleaf', action=self.mock_action)
 
     def test_node_decorator_execute_success(self):
         """Tests that the decorator passes succesful execution through"""

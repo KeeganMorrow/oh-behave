@@ -2,9 +2,9 @@
 
 class Actor:
     """Represents a character in the world"""
-    def __init__(self, name, rootnode=None):
-        self.name = name
-        self._rootnode = rootnode
+    def __init__(self, *args, **kwargs):
+        self.name = kwargs['name']
+        self._rootnode = kwargs['rootnode']
 
     def execute(self):
         """

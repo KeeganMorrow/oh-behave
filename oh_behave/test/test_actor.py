@@ -13,11 +13,11 @@ class TestActor(unittest.TestCase):
         self.mock_rootnode = oh_behave.test.test_behave.mocknode_builder(
                 oh_behave.ExecuteResult.ready)
         self.name = "Billy Bob"
-        self.actor = actor.Actor(self.name, self.mock_rootnode)
+        self.actor = actor.Actor(name=self.name, rootnode=self.mock_rootnode)
 
     def test__init__(self):
         """__init__ method sets up required resources"""
-        a = actor.Actor(self.name, self.mock_rootnode)
+        a = actor.Actor(name=self.name, rootnode=self.mock_rootnode)
         self.assertIs(a.name, self.name)
         self.assertIs(a._rootnode, self.mock_rootnode)
 

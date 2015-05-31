@@ -11,3 +11,9 @@ class ExecuteResult(enum.Enum):
     failure = -1
     ready = 0
     success = 1
+
+class MissingArgumentException(ValueError):
+    def __init__(self, methodclass, method, argument):
+        msg = "Method \"{0}.{1} missing required argument \"{3}\"".format(
+                methodclass.__name__, method.__name__, argument)
+        super().__init__(msg)
