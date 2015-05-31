@@ -11,11 +11,11 @@ def print_node_decorator(func):
 
     def func_decorator(self, *args, **kwargs):
         """See print_node_decorator documentation"""
-        print('{0}.{1} running'.format(self.get_name(), func.__name__))
+        print('Node {0}.{1} running'.format(self.get_name(), func.__name__))
 
         ret = func(self, *args, **kwargs)
 
-        msg = '{0}.{1} finished'.format(self.get_name(), func.__name__)
+        msg = 'Node {0}.{1} finished.'.format(self.get_name(), func.__name__)
         if ret in oh_behave.ExecuteResult:
             msg += ' returns status \"{0}\"'.format(str(ret))
         print(msg)

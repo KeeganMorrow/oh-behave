@@ -13,7 +13,7 @@ class Actor:
         print("Actor {0} running root node".format(self.name))
         if self._rootnode:
             ret = self._rootnode.execute()
-            print("Actor {0} returned status {0}".format(ret))
+            print("Actor {0} returns status {0}".format(ret))
         else:
             ret = None
             print("Actor {0} does not have root node".format(self.name))

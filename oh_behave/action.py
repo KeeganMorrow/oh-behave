@@ -2,6 +2,28 @@
 import enum
 import oh_behave
 
+def print_node_decorator(func):
+    """
+    Returns decorator function that prints execution information
+    """
+
+    def func_decorator(self, *args, **kwargs):
+        """See print_node_decorator documentation"""
+        print('Action {0}.{1} running'.format(
+            self.__class__.__name__,
+            func.__name__))
+
+        ret = func(self, *args, **kwargs)
+
+        msg = 'Action {0}.{1} finished.'.format(self.__class__.__name__, func.__name__)
+        if ret in oh_behave.ExecuteResult:
+            msg += ' returns status \"{0}\"'.format(str(ret))
+        print(msg)
+
+        return ret
+
+    return func_decorator
+
 class Action:
     """
     Action base class
@@ -9,12 +31,15 @@ class Action:
     def __init__(self, actor):
         self._actor = actor
 
+    @print_node_decorator
     def execute(self):
         return self._execute()
 
+    @print_node_decorator
     def failed(self):
         return self._failed()
 
+    @print_node_decorator
     def success(self):
         return self._success()
 
