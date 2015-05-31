@@ -104,4 +104,9 @@ class TestNodeSequence(unittest.TestCase):
         assert_node_calls(node2, 1, 0, 1)
         self.assertEqual(result, behave.ExecuteResult.success)
 
+    def test_node_sequence_execute_empty(self):
+        """Sequence exec returns success when called and already empty"""
+        result = self.sequence.execute()
+        self.assertEqual(result, behave.ExecuteResult.success)
+
 

@@ -64,6 +64,9 @@ class NodeSequence(NodeComposite):
 
     def execute(self):
         """Execute the child nodes in a sequence"""
+        if len(self._children) == 0:
+            return ExecuteResult.success
+
         firstnode = self._children[0]
         status = firstnode.execute()
         if status is ExecuteResult.success:
