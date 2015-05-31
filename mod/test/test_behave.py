@@ -176,6 +176,70 @@ class TestNodeSelector(unittest.TestCase):
         result = self.selector.execute()
         self.assertEqual(result, behave.ExecuteResult.failure)
 
+class TestNodeDecorator(unittest.TestCase):
+    """Tests the decorator node base's logic"""
+    def setUp(self):
+        self.mock_node = mocknode_builder(behave.ExecuteResult.ready)
+        self.decorator = behave.NodeDecorator('decorator', self.mock_node)
+
+    def test_node_decorator_execute_success(self):
+        """Tests that the decorator passes succesful execution through"""
+        self.mock_node.execute.return_value = behave.ExecuteResult.success
+        ret = self.decorator.execute()
+        self.assertIs(ret, behave.ExecuteResult.success)
+        self.mock_node.execute.assert_called_with()
+
+    def test_node_decorator_execute_failure(self):
+        """Tests that the decorator passes failed execution through"""
+        self.mock_node.execute.return_value = behave.ExecuteResult.failure
+        ret = self.decorator.execute()
+        self.assertIs(ret, behave.ExecuteResult.failure)
+        self.mock_node.execute.assert_called_with()
+
+    def test_node_decorator_execute_ready(self):
+        """Tests that the decorator passes ready execution through"""
+        self.mock_node.execute.return_value = behave.ExecuteResult.ready
+        ret = self.decorator.execute()
+        self.assertIs(ret, behave.ExecuteResult.ready)
+        self.mock_node.execute.assert_called_with()
+
+    def test_node_decorator_success_passthrough(self):
+        """Tests that the decorator passes success call through"""
+        self.decorator.success()
+        self.mock_node.success.assert_called_with()
+
+    def test_node_decorator_failed_passthrough(self):
+        """Tests that the decorator passes failed call through"""
+        self.decorator.failed()
+        self.mock_node.failed.assert_called_with()
+
+class TestNodeDecoratorInvert(unittest.TestCase):
+    """Tests the decorator node base's logic"""
+    def setUp(self):
+        self.mock_node = mocknode_builder(behave.ExecuteResult.ready)
+        self.decorator = behave.NodeDecoratorInvert('invert', self.mock_node)
+
+    def test_node_decorator_invert_execute_success(self):
+        """Tests that the decorator makes success into failure"""
+        self.mock_node.execute.return_value = behave.ExecuteResult.success
+        ret = self.decorator.execute()
+        self.assertIs(ret, behave.ExecuteResult.failure)
+        self.mock_node.execute.assert_called_with()
+
+    def test_node_decorator_invert_execute_failure(self):
+        """Tests that the decorator makes failure into success"""
+        self.mock_node.execute.return_value = behave.ExecuteResult.failure
+        ret = self.decorator.execute()
+        self.assertIs(ret, behave.ExecuteResult.success)
+        self.mock_node.execute.assert_called_with()
+
+    def test_node_decorator_invert_execute_ready(self):
+        """Tests that the decorator passes ready execution state through"""
+        self.mock_node.execute.return_value = behave.ExecuteResult.ready
+        ret = self.decorator.execute()
+        self.assertIs(ret, behave.ExecuteResult.ready)
+        self.mock_node.execute.assert_called_with()
+
 class TestNodeLeafIterative(unittest.TestCase):
     """Tests the iterative leaf  node's logic"""
 

@@ -6,8 +6,12 @@ import enum
 ERR_ABSTRACT_CALL = "Attempted to call abstract method"
 
 def print_node_decorator(func):
+    """
+    Returns decorator function that prints execution information
+    """
 
     def func_decorator(self, *args, **kwargs):
+        """See print_node_decorator documentation"""
         print('{0}.{1} running'.format(self.get_name(), func.__name__))
 
         ret = func(self, *args, **kwargs)
@@ -168,6 +172,32 @@ class NodeSelector(NodeComposite):
             elif status is ExecuteResult.success:
                 firstnode.success()
 
+        return status
+
+class NodeDecorator(Node):
+    """Base Decorator, passes everything through"""
+
+    def __init__(self, name, decoratee):
+        super().__init__(name)
+        self._decoratee = decoratee
+
+    def _success(self):
+        self._decoratee.success()
+
+    def _failed(self):
+        self._decoratee.failed()
+
+    def _execute(self):
+        return self._decoratee.execute()
+
+class NodeDecoratorInvert(NodeDecorator):
+    """Inverts execute result of child node"""
+    def _execute(self):
+        status = self._decoratee.execute()
+        if status is ExecuteResult.success:
+            status = ExecuteResult.failure
+        elif status is ExecuteResult.failure:
+            status = ExecuteResult.success
         return status
 
 class NodeLeafIterative(Node):
