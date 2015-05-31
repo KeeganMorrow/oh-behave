@@ -159,3 +159,31 @@ class NodeSelector(NodeComposite):
                 firstnode.success()
 
         return status
+
+class NodeLeafIterative(Node):
+    """Node that takes a number of executions before success"""
+
+    def __init__(self, executions):
+        super().__init__()
+        self._remaining_exec = executions
+
+    def _success(self):
+        pass
+
+    def _failed(self):
+        pass
+
+    def _execute(self):
+        """Execute until enough iterations for success"""
+        #TODO: _remaining_exec should possibly be stored in the actor?
+        if self._remaining_exec < 1:
+            ret = ExecuteResult.success
+        elif self._remaining_exec == 1:
+            ret = ExecuteResult.success
+            self._remaining_exec -= 1
+        else:
+            ret = ExecuteResult.ready
+            self._remaining_exec -= 1
+        return ret
+
+

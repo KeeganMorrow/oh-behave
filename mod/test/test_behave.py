@@ -176,3 +176,21 @@ class TestNodeSelector(unittest.TestCase):
         result = self.selector.execute()
         self.assertEqual(result, behave.ExecuteResult.failure)
 
+class TestNodeLeafIterative(unittest.TestCase):
+    """Tests the iterative leaf  node's logic"""
+
+    def setUp(self):
+        pass
+
+    def test_node_leaf_iterative_execute_loops(self):
+        """Tests that the iterative leaf returns success after n executions"""
+        execs = 10
+        leaf = behave.NodeLeafIterative(execs)
+        status = None
+        loops = 0
+        while status is not behave.ExecuteResult.success:
+            status = leaf.execute()
+            loops += 1
+            # Fail if it looks like we are going to loop forever
+            self.assertGreater(execs*1.5, loops)
+        self.assertEqual(execs, loops)
