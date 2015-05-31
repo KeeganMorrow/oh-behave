@@ -8,10 +8,10 @@ def main():
     root = behave.NodeSelector('selector')
     billybob = actor.Actor("Billy bob", root)
 
-    it1 = behave.NodeLeafAction('leaf1', action.ActionTimed(billybob, 2))
-    it2 = behave.NodeDecoratorInvert('inv', behave.NodeLeafAction('leaf2', action.ActionTimed(billybob, 1)))
-    it3 = behave.NodeLeafAction('leaf3', action.ActionTimed(billybob, 3))
-    it4 = behave.NodeLeafAction('leaf4', action.ActionTimed(billybob, 1))
+    it1 = behave.NodeLeafAction('leaf1', action.ActionTimed(billybob, 'sleep', 2))
+    it2 = behave.NodeDecoratorInvert('inv', behave.NodeLeafAction('leaf2', action.ActionTimed(billybob, 'mine gold', 1)))
+    it3 = behave.NodeLeafAction('leaf3', action.ActionTimed(billybob, 'cause trouble', 3))
+    it4 = behave.NodeLeafAction('leaf4', action.ActionTimed(billybob, 'look at cat pictures', 1))
 
     seq1 = behave.NodeSequence('sequence1')
     seq1.addchild(it1)

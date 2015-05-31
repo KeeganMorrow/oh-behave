@@ -9,7 +9,7 @@ from oh_behave import action
 class TestAction(unittest.TestCase):
     def setUp(self):
         self.actor = mock.Mock(spec=actor.Actor)
-        self.action= action.Action(self.actor)
+        self.action = action.Action(self.actor, 'Sleep')
 
     def test_action_execute_passthrough(self):
         """The execute call is correctly passed through"""
@@ -47,7 +47,7 @@ class TestActionTimed(unittest.TestCase):
     def test_node_action_timed_execute_loops(self):
         """Tests that the iterative leaf returns success after n executions"""
         execs = 10
-        timed = action.ActionTimed(self.actor, execs)
+        timed = action.ActionTimed(self.actor, 'bing watch netflix',  execs)
         status = None
         loops = 0
         while status is not oh_behave.ExecuteResult.success:
