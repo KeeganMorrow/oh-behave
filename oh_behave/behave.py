@@ -189,30 +189,21 @@ class NodeDecoratorInvert(NodeDecorator):
             status = oh_behave.ExecuteResult.success
         return status
 
-class NodeLeafIterative(Node):
-    """Node that takes a number of executions before success"""
+class NodeLeafAction(Node):
+    """Node that runs runs an action"""
 
-    def __init__(self, name, executions):
+    def __init__(self, name, action):
         super().__init__(name)
-        self._remaining_exec = executions
+        self._action = action
 
     def _success(self):
-        pass
+        return self._action.success()
 
     def _failed(self):
-        pass
+        return self._action.failed()
 
     def _execute(self):
-        """Execute until enough iterations for success"""
-        #TODO: _remaining_exec should possibly be stored in the actor?
-        if self._remaining_exec < 1:
-            ret = oh_behave.ExecuteResult.success
-        elif self._remaining_exec == 1:
-            ret = oh_behave.ExecuteResult.success
-            self._remaining_exec -= 1
-        else:
-            ret = oh_behave.ExecuteResult.ready
-            self._remaining_exec -= 1
-        return ret
+        return self._action.execute()
+
 
 

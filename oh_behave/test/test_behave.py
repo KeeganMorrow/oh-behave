@@ -242,21 +242,41 @@ class TestNodeDecoratorInvert(unittest.TestCase):
         self.assertIs(ret, oh_behave.ExecuteResult.ready)
         self.mock_node.execute.assert_called_with()
 
-class TestNodeLeafIterative(unittest.TestCase):
-    """Tests the iterative leaf  node's logic"""
-
+class TestNodeLeafAction(unittest.TestCase):
+    """Tests the action leaf node base's logic"""
     def setUp(self):
-        pass
+        from oh_behave import action
+        self.mock_action = mock.Mock(spec=action.Action)
+        self.leaf = behave.NodeLeafAction('actionleaf', self.mock_action)
 
-    def test_node_leaf_iterative_execute_loops(self):
-        """Tests that the iterative leaf returns success after n executions"""
-        execs = 10
-        leaf = behave.NodeLeafIterative('leaf_iterate00', execs)
-        status = None
-        loops = 0
-        while status is not oh_behave.ExecuteResult.success:
-            status = leaf.execute()
-            loops += 1
-            # Fail if it looks like we are going to loop forever
-            self.assertGreater(execs*1.5, loops)
-        self.assertEqual(execs, loops)
+    def test_node_decorator_execute_success(self):
+        """Tests that the decorator passes succesful execution through"""
+        self.mock_action.execute.return_value = oh_behave.ExecuteResult.success
+        ret = self.leaf.execute()
+        self.assertIs(ret, oh_behave.ExecuteResult.success)
+        self.mock_action.execute.assert_called_with()
+
+    def test_node_decorator_execute_failure(self):
+        """Tests that the decorator passes failed execution through"""
+        self.mock_action.execute.return_value = oh_behave.ExecuteResult.failure
+        ret = self.leaf.execute()
+        self.assertIs(ret, oh_behave.ExecuteResult.failure)
+        self.mock_action.execute.assert_called_with()
+
+    def test_node_decorator_execute_ready(self):
+        """Tests that the decorator passes ready execution through"""
+        self.mock_action.execute.return_value = oh_behave.ExecuteResult.ready
+        ret = self.leaf.execute()
+        self.assertIs(ret, oh_behave.ExecuteResult.ready)
+        self.mock_action.execute.assert_called_with()
+
+    def test_node_decorator_success_passthrough(self):
+        """Tests that the decorator passes success call through"""
+        self.leaf.success()
+        self.mock_action.success.assert_called_with()
+
+    def test_node_decorator_failed_passthrough(self):
+        """Tests that the decorator passes failed call through"""
+        self.leaf.failed()
+        self.mock_action.failed.assert_called_with()
+
