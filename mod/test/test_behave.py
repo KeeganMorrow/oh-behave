@@ -63,6 +63,10 @@ class TestNodeSequence(unittest.TestCase):
     def setUp(self):
         self.sequence = behave.NodeSequence()
 
+    def test_node_sequence__init__(self):
+        """Test sequence initialization"""
+        self.assertTrue(isinstance(self.sequence.name, str))
+
     def test_node_sequence_execute_repeat(self):
         """Sequence exec repeats when node returns ready status the first time"""
         node1 = mocknode_builder(behave.ExecuteResult.ready)
