@@ -11,6 +11,18 @@ class TestAction(unittest.TestCase):
         self.actor = mock.Mock(spec=actor.Actor)
         self.action = action.Action(actor=self.actor, name='Sleep')
 
+    def test_action__init__(self):
+        """Tests that __init__ properly sets up action actor"""
+        name = 'node00'
+        act = mock.Mock()
+        node = action.Action(name=name, actor=act)
+        self.assertIs(node._actor, act)
+
+    def test_action__init__no_actor(self):
+        """Not providing an actor results in an exception being raised"""
+        with self.assertRaises(oh_behave.MissingArgumentException):
+            node = action.Action(name='asdf')
+
     def test_action_execute_passthrough(self):
         """The execute call is correctly passed through"""
         with mock.patch.object(self.action, '_execute', autospec=True) as mock_execute:
@@ -43,6 +55,17 @@ class TestActionTimed(unittest.TestCase):
 
     def setUp(self):
         self.actor = mock.Mock(spec=actor.Actor)
+
+    def test_action_timed__init__(self):
+        """Tests that __init__ properly sets up action actor"""
+        name = 'node00'
+        node = action.Action(name=name, actor=self.actor, timegoal=5)
+        self.assertIs(node._actor, self.actor)
+
+    def test_action_timed__init__no_timegoal(self):
+        """Not providing an actor results in an exception being raised"""
+        with self.assertRaises(oh_behave.MissingArgumentException):
+            node = action.ActionTimed(name='asdf', actor=self.actor)
 
     def test_node_action_timed_execute_loops(self):
         """Tests that the iterative leaf returns success after n executions"""

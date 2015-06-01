@@ -21,6 +21,17 @@ class TestActor(unittest.TestCase):
         self.assertIs(a.name, self.name)
         self.assertIs(a._rootnode, self.mock_rootnode)
 
+    def test__init__no_name(self):
+        """__init__ method throws exception if name not provided"""
+        with self.assertRaises(oh_behave.MissingArgumentException):
+            a = actor.Actor(rootnode=self.mock_rootnode)
+
+    def test__init__no_rootnode(self):
+        """__init__ method sets up required resources"""
+        a = actor.Actor(name=self.name)
+        self.assertIs(a.name, self.name)
+        self.assertIs(a._rootnode, None)
+
     def test_execute_no_rootnode(self):
         """execute does not attempt to run if rootnode is None"""
         self.actor._rootnode = None

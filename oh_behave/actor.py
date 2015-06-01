@@ -1,10 +1,17 @@
 """Actor module"""
-
+import oh_behave
 class Actor:
     """Represents a character in the world"""
     def __init__(self, *args, **kwargs):
-        self.name = kwargs['name']
-        self._rootnode = kwargs['rootnode']
+        try:
+            self.name = kwargs['name']
+        except KeyError as e:
+            raise oh_behave.MissingArgumentException(self, self.__init__, str(e))
+        try:
+            self._rootnode = kwargs['rootnode']
+        except KeyError:
+            self._rootnode = None
+
 
     def execute(self):
         """

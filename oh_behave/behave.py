@@ -27,7 +27,10 @@ def print_node_decorator(func):
 class Node:
     """Base node class"""
     def __init__(self, *args, **kwargs):
-        self._name = kwargs['name']
+        try:
+            self._name = kwargs['name']
+        except KeyError as e:
+            raise oh_behave.MissingArgumentException(self, self.__init__, str(e))
 
     @print_node_decorator
     def execute(self):
@@ -166,7 +169,10 @@ class NodeDecorator(Node):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._decoratee = kwargs['decoratee']
+        try:
+            self._decoratee = kwargs['decoratee']
+        except KeyError as e:
+            raise oh_behave.MissingArgumentException(self, self.__init__, str(e))
 
     def _success(self):
         self._decoratee.success()
@@ -192,7 +198,10 @@ class NodeLeafAction(Node):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._action = kwargs['action']
+        try:
+            self._action = kwargs['action']
+        except KeyError as e:
+            raise oh_behave.MissingArgumentException(self, self.__init__, str(e))
 
     def _success(self):
         return self._action.success()

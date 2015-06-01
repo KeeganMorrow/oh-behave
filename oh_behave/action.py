@@ -9,13 +9,19 @@ class Action(behave.Node):
     """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._actor = kwargs['actor']
+        try:
+            self._actor = kwargs['actor']
+        except KeyError as e:
+            raise oh_behave.MissingArgumentException(self, self.__init__, str(e))
 
 class ActionTimed(Action):
     """Action that takes a certain amount of time"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.timegoal = kwargs['timegoal']
+        try:
+            self.timegoal = kwargs['timegoal']
+        except KeyError as e:
+            raise oh_behave.MissingArgumentException(self, self.__init__, str(e))
         self.time = 1
 
     def _execute(self):

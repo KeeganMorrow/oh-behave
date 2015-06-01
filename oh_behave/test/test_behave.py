@@ -45,9 +45,18 @@ def assert_node_calls(mock_node, succ_count, fail_count, exec_count):
 class TestNode(unittest.TestCase):
     """Tests the base node's logic"""
     def setUp(self):
-        self.node = behave.NodeComposite(name='node00')
+        pass
+
     def test_node__init__(self):
-        self.assertTrue(isinstance(self.node._name, str))
+        """Tests that __init__ properly sets up node name"""
+        name = 'node00'
+        node = behave.NodeComposite(name=name)
+        self.assertIs(node._name, name)
+
+    def test_node__init__no_name(self):
+        """Not providing a name results in an exception being raised"""
+        with self.assertRaises(oh_behave.MissingArgumentException):
+            node = behave.NodeComposite()
 
 class TestNodeComposite(unittest.TestCase):
     """Tests the composite node's logic"""
@@ -191,6 +200,18 @@ class TestNodeDecorator(unittest.TestCase):
         self.mock_node = mocknode_builder(oh_behave.ExecuteResult.ready)
         self.decorator = behave.NodeDecorator(name='decorator', decoratee=self.mock_node)
 
+    def test_node_decorator__init__(self):
+        """Tests that __init__ properly sets up node decoratee"""
+        name = 'node00'
+        decoratee = mock.Mock()
+        node = behave.NodeDecorator(name=name, decoratee=decoratee)
+        self.assertIs(node._decoratee, decoratee)
+
+    def test_node_decorator__init__no_decoratee(self):
+        """Not providing a decoratee results in an exception being raised"""
+        with self.assertRaises(oh_behave.MissingArgumentException):
+            node = behave.NodeDecorator(name='asdf')
+
     def test_node_decorator_execute_success(self):
         """Tests that the decorator passes succesful execution through"""
         self.mock_node.execute.return_value = oh_behave.ExecuteResult.success
@@ -255,6 +276,18 @@ class TestNodeLeafAction(unittest.TestCase):
         from oh_behave import action
         self.mock_action = mock.Mock(spec=action.Action)
         self.leaf = behave.NodeLeafAction(name='actionleaf', action=self.mock_action)
+
+    def test_node_leaf_action__init__(self):
+        """Tests that __init__ properly sets up node action"""
+        name = 'node00'
+        act = mock.Mock()
+        node = behave.NodeLeafAction(name=name, action=act)
+        self.assertIs(node._action, act)
+
+    def test_node_leaf_action__init__no_action(self):
+        """Not providing a decoratee results in an exception being raised"""
+        with self.assertRaises(oh_behave.MissingArgumentException):
+            node = behave.NodeLeafAction(name='asdf')
 
     def test_node_decorator_execute_success(self):
         """Tests that the decorator passes succesful execution through"""
