@@ -1,6 +1,7 @@
 """Module for parsing data files and creating objects from them"""
 
 import json
+import oh_behave
 from oh_behave import behave
 from oh_behave import actor
 from oh_behave import action
@@ -15,6 +16,19 @@ classname_match_table_default = {
     'NodeDecorator' : behave.NodeDecorator
 }
 
+class MissingFieldException(BaseException):
+    pass
+
+class ObjectEntry:
+    """Represents an object and linking data"""
+    def __init__(self, values):
+        self.values = values
+        self.classtype = values.get('type', None)
+        self.rootnode = values.get('rootnode', None)
+        self.childnodes = values.get('childnodes', [])
+
+        if self.classtype is None:
+            raise MissingFieldException('Missing required field "type"')
 
 class DataParser:
     """Class used to parse configuration files"""
@@ -24,26 +38,24 @@ class DataParser:
         else:
             self._classname_match_table = classname_match_table
 
-        self._actors = []
-        self._nodes = []
+        self._entries = []
 
     def parse_file(self, filepath):
         """Parse a file"""
         pass
 
-    def parse_object_string(self, string):
+    def _parse_object_string(self, string):
         """Create an object from a json string"""
         parsed = json.loads(string)
-        classname = parsed['type']
-        object_class = self._classname_match_table[classname]
 
-        created = object_class(*[], **parsed)
-        self._add_object(created, classname)
+        self._entries.append(ObjectEntry(parsed))
+
+    def link_objects(self):
+        """Link all parsed objects into the determined hierarchy"""
+        pass
 
     def _add_object(self, obj, classname):
         """Add an object to the appropriate list"""
-        if classname == 'Actor':
-            self._actors.append(obj)
-        else:
-            self._nodes.append(obj)
+        # entry = ObjectEntry(
+        self._entries.append(obj)
 
