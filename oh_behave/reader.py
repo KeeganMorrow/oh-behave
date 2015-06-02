@@ -24,11 +24,14 @@ class ObjectEntry:
     def __init__(self, values):
         self.values = values
         self.classtype = values.get('type', None)
+        self.ident = values.get('id', None)
         self.rootnode = values.get('rootnode', None)
         self.childnodes = values.get('childnodes', [])
 
         if self.classtype is None:
             raise MissingFieldException('Missing required field "type"')
+        if self.ident is None:
+            raise MissingFieldException('Missing required field "id"')
 
 class DataParser:
     """Class used to parse configuration files"""

@@ -36,10 +36,12 @@ def mock_classname_match_table():
 
 class TestObjectEntry(unittest.TestCase):
     """Tests ObjectEntry class"""
+    def setUp(self):
+        self.min_params = {'id':'fake', 'type':'faketype'}
 
     def test__init__default_parameters(self):
-        """Tests that parameters are given correct defaults"""
-        entry = reader.ObjectEntry({'type':'fake'})
+        """Tests that non-required parameters are given correct defaults"""
+        entry = reader.ObjectEntry(self.min_params)
         self.assertIs(None, entry.rootnode)
         self.assertEqual([], entry.childnodes)
 
@@ -47,7 +49,8 @@ class TestObjectEntry(unittest.TestCase):
         """__init__ grabs the parameters shown below"""
         root = 'node01'
         childnodes = ['node02', 'node03']
-        data = {'type':'Fake',
+        data = {'id':'mock',
+                'type':'Fake',
                 'rootnode':root,
                 'childnodes':childnodes
                }
@@ -60,7 +63,9 @@ class TestObjectEntry(unittest.TestCase):
     def test__init__no_classtype(self):
         """__init__ throws MissingParameterException if classtype not specifed"""
         with self.assertRaises(reader.MissingFieldException):
-            reader.ObjectEntry({'rootnode':'node01'})
+            params = self.min_params
+            del params['type']
+            reader.ObjectEntry(params)
 
 
 class TestDataParser(unittest.TestCase):
@@ -86,10 +91,11 @@ class TestDataParser(unittest.TestCase):
     def test_link_objects(self):
         """Parse simple json representation of node and add it to correct list"""
         input_string1 = '{\n' \
-            '    "type": "NodeSelector",\n' \
-            '    "name": "guy_node"\n' \
+            '    "id": "guy_node",\n' \
+            '    "type": "NodeSelector"\n' \
             '}'
         input_string2 = '{\n' \
+            '    "id": "actor01",\n' \
             '    "type": "Actor",\n' \
             '    "name": "Guy Mann",\n' \
             '    "rootnode": "guy_node"\n' \
