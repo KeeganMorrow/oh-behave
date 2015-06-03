@@ -44,21 +44,25 @@ class TestObjectEntry(unittest.TestCase):
         entry = reader.ObjectEntry(self.min_params)
         self.assertIs(None, entry.rootnode)
         self.assertEqual([], entry.childnodes)
+        self.assertIs(None, entry.decoratee)
 
     def test__init__gets_parameters(self):
         """__init__ grabs the parameters shown below"""
         root = 'node01'
         childnodes = ['node02', 'node03']
+        decoratee='decoratednode'
         data = {'id':'mock',
                 'type':'Fake',
                 'rootnode':root,
-                'childnodes':childnodes
+                'childnodes':childnodes,
+                'decoratee':decoratee
                }
 
         entry = reader.ObjectEntry(data)
 
         self.assertEqual(entry.rootnode, root)
         self.assertEqual(entry.childnodes, childnodes)
+        self.assertEqual(entry.decoratee, decoratee)
 
     def test__init__no_classtype(self):
         """__init__ throws MissingParameterException if classtype not specifed"""

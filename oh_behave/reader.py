@@ -11,7 +11,7 @@ classname_match_table_default = {
     'Actor' : actor.Actor,
     'ActionTimed' : action.ActionTimed,
     'NodeSequence' : behave.NodeSequence,
-    'NodeSelector' : behave.NodeSequence,
+    'NodeSelector' : behave.NodeSelector,
     'NodeLeafAction' : behave.NodeLeafAction,
     'NodeDecoratorInvert' : behave.NodeDecoratorInvert,
     'NodeDecorator' : behave.NodeDecorator
@@ -30,6 +30,7 @@ class ObjectEntry:
         self.ident = values.get('id', None)
         self.rootnode = values.get('rootnode', None)
         self.childnodes = values.get('childnodes', [])
+        self.decoratee = values.get('decoratee', None)
         logger.info("Built Entry: type:\"%s\" id:\"%s\"", self.classtype, self.ident)
         if self.classtype is None:
             raise MissingFieldException('Missing required field "type"')
@@ -73,13 +74,10 @@ class DataParser:
             elif entry.classtype.startswith('Node'):
                 for child in entry.childnodes:
                     logger.info("Linking node id:'%s' to childnode id '%s'", entry.ident, child)
-                    objects[entry.ident].add_child(objects[child])
+                    objects[entry.ident].addchild(objects[child])
+                if entry.decoratee:
+                    logger.info("Linking decorator node id:'%s' to node id '%s'", entry.ident, entry.decoratee)
+                    objects[entry.ident].set_decoratee(objects[entry.decoratee])
 
         return objects
-
-    def _add_object(self, obj, classname):
-        """Add an object to the appropriate list"""
-        # entry = ObjectEntry(
-        self._entries.append(obj)
-        json.tests
 

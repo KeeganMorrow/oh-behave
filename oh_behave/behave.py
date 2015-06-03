@@ -1,8 +1,11 @@
 """Behavior Module"""
 #TODO: Come up with a better name!
 
+import logging
 import enum
 import oh_behave
+
+logger = logging.getLogger(__name__)
 
 def print_node_decorator(func):
     """
@@ -11,11 +14,11 @@ def print_node_decorator(func):
 
     def func_decorator(self, *args, **kwargs):
         """See print_node_decorator documentation"""
-        print('Node {0}.{1} running'.format(self.get_name(), func.__name__))
+        print('Node {0}.{1} running'.format(self.get_id(), func.__name__))
 
         ret = func(self, *args, **kwargs)
 
-        msg = 'Node {0}.{1} finished.'.format(self.get_name(), func.__name__)
+        msg = 'Node {0}.{1} finished.'.format(self.get_id(), func.__name__)
         if ret in oh_behave.ExecuteResult:
             msg += ' returns status \"{0}\"'.format(str(ret))
         print(msg)
@@ -27,10 +30,16 @@ def print_node_decorator(func):
 class Node:
     """Base node class"""
     def __init__(self, *args, **kwargs):
-        try:
-            self._name = kwargs['name']
-        except KeyError as e:
-            raise oh_behave.MissingArgumentException(self, self.__init__, str(e))
+        self._ident = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
+        if self._ident is None:
+            raise oh_behave.MissingArgumentException(self, self.__init__, 'id')
+
+    def get_id(self):
+        """
+        Returns the id representing the node's string
+        """
+        return self._ident
 
     @print_node_decorator
     def execute(self):
@@ -173,7 +182,12 @@ class NodeDecorator(Node):
             self._decoratee = kwargs['decoratee']
         except KeyError as e:
             raise oh_behave.MissingArgumentException(self, self.__init__, str(e))
-
+    def set_decoratee(self, decoratee):
+        """Set the node the decorator works on"""
+        #TODO : Improve the output on this by adding a __str__ method to node
+        logger.info('Decorator node id "%s" changing decorator to "%s"',
+                self._ident, decoratee.get_id())
+        self._decoratee = decoratee
     def _success(self):
         self._decoratee.success()
 

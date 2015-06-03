@@ -9,13 +9,13 @@ from oh_behave import action
 class TestAction(unittest.TestCase):
     def setUp(self):
         self.actor = mock.Mock(spec=actor.Actor)
-        self.action = action.Action(actor=self.actor, name='Sleep')
+        self.action = action.Action(actor=self.actor, id='action01')
 
     def test_action__init__(self):
         """Tests that __init__ properly sets up action actor"""
-        name = 'node00'
+        id = 'node00'
         act = mock.Mock()
-        node = action.Action(name=name, actor=act)
+        node = action.Action(id=id, actor=act)
         self.assertIs(node._actor, act)
 
     def test_action__init__no_actor(self):
@@ -58,8 +58,8 @@ class TestActionTimed(unittest.TestCase):
 
     def test_action_timed__init__(self):
         """Tests that __init__ properly sets up action actor"""
-        name = 'node00'
-        node = action.Action(name=name, actor=self.actor, timegoal=5)
+        ident = 'node00'
+        node = action.Action(id=ident, actor=self.actor, timegoal=5)
         self.assertIs(node._actor, self.actor)
 
     def test_action_timed__init__no_timegoal(self):
@@ -70,7 +70,7 @@ class TestActionTimed(unittest.TestCase):
     def test_node_action_timed_execute_loops(self):
         """Tests that the iterative leaf returns success after n executions"""
         execs = 10
-        timed = action.ActionTimed(actor=self.actor, name='bing watch netflix', timegoal=execs)
+        timed = action.ActionTimed(actor=self.actor, id="action", name='binge watch netflix', timegoal=execs)
         status = None
         loops = 0
         while status is not oh_behave.ExecuteResult.success:
