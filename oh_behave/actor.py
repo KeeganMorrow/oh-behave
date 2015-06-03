@@ -22,13 +22,13 @@ class Actor:
         """
         Run the actor's root behavior tree node
         """
-        print("Actor {0} running root node".format(self.name))
+        logger.info('Actor "%s" running root node',self.name)
         if self._rootnode:
             ret = self._rootnode.execute()
-            print("Actor {0} returns status {0}".format(ret))
+            logger.info('Actor "%s" returns status "%s"', self.name, ret)
         else:
             ret = None
-            print("Actor {0} does not have root node".format(self.name))
+            logger.warning('Actor "%s" does not have root node', self.name)
         return ret
 
     def set_rootnode(self, node):
