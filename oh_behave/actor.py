@@ -1,5 +1,9 @@
 """Actor module"""
+import logging
 import oh_behave
+
+logger = logging.getLogger(__name__)
+
 class Actor:
     """Represents a character in the world"""
     def __init__(self, *args, **kwargs):
@@ -11,6 +15,7 @@ class Actor:
             self._rootnode = kwargs['rootnode']
         except KeyError:
             self._rootnode = None
+        logging.info('Constructed actor name "%s"', self.name)
 
 
     def execute(self):

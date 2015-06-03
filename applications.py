@@ -1,32 +1,35 @@
+import logging
 import oh_behave
 from oh_behave import behave
 from oh_behave import actor
 from oh_behave import action
+from oh_behave import reader
+
+logger = logging.getLogger(__name__)
 
 def main():
+    input_string1 = '{\n' \
+        '        "id": "actor_01",\n' \
+        '        "type": "Actor",\n' \
+        '        "name": "Billy Bob",\n' \
+        '        "rootnode": "noderoot"\n' \
+        '}'
+    input_string2 = '{\n' \
+        '        "id": "noderoot",\n' \
+        '        "type": "NodeSequence",\n' \
+        '        "name": "Root Node"\n' \
+        '}'
 
-    root = behave.NodeSelector(name='selector')
-    billybob = actor.Actor(name="Billy Bob", rootnode=root)
+    logger.info('Entering main')
 
-    it1 = behave.NodeLeafAction(name='leaf1', action=action.ActionTimed(actor=billybob, name='sleep', timegoal=2))
-    it2 = behave.NodeDecoratorInvert(name='inv', decoratee=behave.NodeLeafAction(name='leaf2', action=action.ActionTimed(actor=billybob, name='mine gold', timegoal=1)))
-    it3 = behave.NodeLeafAction(name='leaf3', action=action.ActionTimed(actor=billybob, name='cause trouble', timegoal=3))
-    it4 = behave.NodeLeafAction(name='leaf4', action=action.ActionTimed(actor=billybob, name='look at cat pictures', timegoal=1))
+    parser = reader.DataParser()
 
-    seq1 = behave.NodeSequence(name='sequence1')
-    seq1.addchild(it1)
-    seq1.addchild(it2)
+    parser._parse_object_string(input_string1)
+    parser._parse_object_string(input_string2)
+    objects = parser.build_objects()
 
-    seq2 = behave.NodeSequence(name='sequence2')
-    seq2.addchild(it3)
-    seq2.addchild(it4)
+    objects['actor_01'].execute()
+if __name__ == "__main__":
 
-    root.addchild(seq1)
-    root.addchild(seq2)
-
-
-    status = oh_behave.ExecuteResult.ready
-    while status == oh_behave.ExecuteResult.ready:
-        status = billybob.execute()
-
-main()
+    logging.basicConfig(level=logging.DEBUG)
+    main()
